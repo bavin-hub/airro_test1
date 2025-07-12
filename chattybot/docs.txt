@@ -1,0 +1,7 @@
+https://github.com/google/generative-ai-docs/blob/main/site/en/gemma/docs/core/lora_tuning.ipynb
+
+
+https://huggingface.co/RajuKandasamy/tamillama_tiny_30m
+
+
+https://www.youtube.com/watch?v=hzMppweNvaI
