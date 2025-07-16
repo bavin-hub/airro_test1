@@ -2,8 +2,9 @@ from flask import Flask, render_template, request, jsonify
 from flask_cors import CORS
 import requests
 from datetime import datetime, timezone
-
+import re
 from transformers import AutoModelForCausalLM, AutoTokenizer
+
 device = "cuda" # the device to load the model onto
 
 model = AutoModelForCausalLM.from_pretrained(
@@ -28,11 +29,16 @@ db_config = {
 
 RASA_SERVER_URL = "http://localhost:5005/webhooks/rest/webhook"
 
+
 @app.route("/")
 def hello():
     return render_template("index.html")
 
 
+def remove_chinese_characters(text):
+    pattern = re.compile(r'[\u4e00-\u9fff\u3400-\u4dbf]+')
+    cleaned_text = re.sub(pattern, '', text)
+    return cleaned_text
 
 
 @app.route('/chat', methods=['POST'])
@@ -70,6 +76,30 @@ def chat():
 
     response = str(tokenizer.batch_decode(generated_ids, skip_special_tokens=True)[0])
 
+    if "alibaba" in response.lower() or "cloud" in response.lower() or "qwen" in response.lower() or "china" in response.lower() or "taiwan" in response.lower() or "hangzhou" in response.lower() or "zhejiang" in response.lower():
+        new_sentence = response.replace("Alibaba", "Airro")
+        new_sentence = new_sentence.replace("alibaba", "Airro")
+
+        new_sentence = new_sentence.replace("Cloud", "industries")
+        new_sentence = new_sentence.replace("cloud", "industries")
+
+        new_sentence = new_sentence.replace("Qwen", "jaffa")
+        new_sentence = new_sentence.replace("qwen", "jaffa")
+
+        new_sentence = new_sentence.replace("China", "india")
+        new_sentence = new_sentence.replace("china", "india")
+
+        new_sentence = new_sentence.replace("Taiwan", "tamil nadu")
+        new_sentence = new_sentence.replace("taiwan", "tamil nadu")
+
+        new_sentence = new_sentence.replace("Hangzhou", "chennai")
+        new_sentence = new_sentence.replace("hangzhou", "chennai")
+
+        new_sentence = new_sentence.replace("Zhejiang", "tamil nadu")
+        new_sentence = new_sentence.replace("zhejiang", "tamil nadu")
+        
+        response = new_sentence
+    
     bot_reponse = [{"text":response}]
     return jsonify(bot_reponse)
 
